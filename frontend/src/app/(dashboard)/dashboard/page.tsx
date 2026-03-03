@@ -6,10 +6,11 @@ import Header from '@/components/layout/Header';
 import TaskCard from '@/components/tasks/TaskCard';
 import TaskModal from '@/components/tasks/TaskModal';
 import EmptyState from '@/components/ui/EmptyState';
+import AuthGuard from '@/components/auth/AuthGuard';
 import { useTasks } from '@/hooks/useTasks';
 import { Task } from '@/types';
 
-export default function DashboardPage() {
+function DashboardContent() {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState<string | undefined>();
   const [priority, setPriority] = useState<string | undefined>();
@@ -192,5 +193,13 @@ export default function DashboardPage() {
 
       <TaskModal isOpen={isModalOpen} onClose={handleCloseModal} task={editingTask} onSuccess={refetch} />
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <AuthGuard>
+      <DashboardContent />
+    </AuthGuard>
   );
 }
