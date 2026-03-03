@@ -5,19 +5,21 @@ import { useAuthStore } from '@/lib/auth-store';
 
 interface HeaderProps {
   title: string;
-  onMenuToggle: () => void;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
 }
 
+import { useDashboard } from '@/lib/dashboard-context';
+
 export default function Header({ title, onMenuToggle, searchValue, onSearchChange }: HeaderProps) {
   const { user } = useAuthStore();
+  const { toggleSidebar } = useDashboard();
 
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <button onClick={onMenuToggle} className="lg:hidden text-gray-600 hover:text-gray-900">
+          <button onClick={toggleSidebar} className="lg:hidden text-gray-600 hover:text-gray-900">
             <Menu size={24} />
           </button>
           <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
