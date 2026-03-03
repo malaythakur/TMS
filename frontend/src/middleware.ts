@@ -3,20 +3,12 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const authStorage = request.cookies.get('auth-storage');
+  const authCookie = request.cookies.get('auth');
 
-  let isAuthenticated = false;
-  if (authStorage) {
-    try {
-      const parsed = JSON.parse(authStorage.value);
-      isAuthenticated = !!parsed.state?.user;
-    } catch {
-      isAuthenticated = false;
-    }
-  }
+  const isAuthenticated = !!authCookie;
 
   // Protect dashboard routes
-  if (pathname.startsWith('/dashboard')) {
+  if (pathname.startsWith('/dashboard') || pathname.startsWith('/tasks') || pathname.startsWith('/settings')) {
     if (!isAuthenticated) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
@@ -29,7 +21,7 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // Redirect root to dashboard or login
+  // Redirect root based on auth
   if (pathname === '/') {
     if (isAuthenticated) {
       return NextResponse.redirect(new URL('/dashboard', request.url));
@@ -41,5 +33,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/dashboard/:path*', '/login', '/register'],
+  matcher: ['/', '/dashboard/:path*', '/tasks/:path*', '/settings/:path*', '/login', '/register'],
 };
