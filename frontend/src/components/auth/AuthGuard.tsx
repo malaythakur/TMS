@@ -3,10 +3,10 @@
 import { useAuthStore } from '@/lib/auth-store';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from '@/lib/axios';
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { user, setAuth, clearAuth } = useAuthStore();
+  const { user, setAuth } = useAuthStore();
   const router = useRouter();
   const [isChecking, setIsChecking] = useState(true);
 
@@ -19,14 +19,9 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
             {},
             { withCredentials: true }
           );
-          const { accessToken } = response.data.data;
-          if (user) {
-            setAuth(user, accessToken);
-          } else {
-            router.push('/login');
-          }
+          const { user: refreshedUser, accessToken } = response.data.data;
+          setAuth(refreshedUser, accessToken);
         } catch {
-          clearAuth();
           router.push('/login');
         }
       }
@@ -34,7 +29,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     };
 
     checkAuth();
-  }, [user, setAuth, clearAuth, router]);
+  }, [user, setAuth, router]);
 
   if (isChecking) {
     return (
