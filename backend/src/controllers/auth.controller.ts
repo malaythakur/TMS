@@ -43,6 +43,13 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
+    res.cookie('auth', 'true', {
+      httpOnly: false,
+      sameSite: 'strict',
+      secure: env.CLIENT_URL.startsWith('https'),
+      maxAge: 15 * 60 * 1000,
+    });
+
     success(res, { user, accessToken }, 'User registered successfully', 201);
   } catch (err) {
     error(res, 'Registration failed', 500, err);
@@ -78,6 +85,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       sameSite: 'strict',
       secure: env.CLIENT_URL.startsWith('https'),
       maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.cookie('auth', 'true', {
+      httpOnly: false,
+      sameSite: 'strict',
+      secure: env.CLIENT_URL.startsWith('https'),
+      maxAge: 15 * 60 * 1000,
     });
 
     const { password: _, ...userWithoutPassword } = user;
@@ -124,6 +138,7 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
     }
 
     res.clearCookie('refreshToken', { path: '/api/auth/refresh' });
+    res.clearCookie('auth');
 
     success(res, null, 'Logout successful');
   } catch (err) {
