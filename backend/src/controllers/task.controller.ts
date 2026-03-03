@@ -13,7 +13,7 @@ export const getTasks = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const { page, limit, status, priority, search } = parsed.data;
+    const { page, limit, status, priority, search, sortBy, sortOrder } = parsed.data;
     const skip = (page - 1) * limit;
 
     const where: any = { userId };
@@ -27,7 +27,7 @@ export const getTasks = async (req: Request, res: Response): Promise<void> => {
     }
 
     const [tasks, total] = await Promise.all([
-      prisma.task.findMany({ where, skip, take: limit, orderBy: { createdAt: 'desc' } }),
+      prisma.task.findMany({ where, skip, take: limit, orderBy: { [sortBy]: sortOrder } }),
       prisma.task.count({ where }),
     ]);
 
@@ -52,7 +52,7 @@ export const getTasks = async (req: Request, res: Response): Promise<void> => {
 export const getTask = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user!.userId;
-    const { id } = req.params;
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
     const task = await prisma.task.findFirst({ where: { id, userId } });
 
@@ -92,7 +92,7 @@ export const createTask = async (req: Request, res: Response): Promise<void> => 
 export const updateTask = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user!.userId;
-    const { id } = req.params;
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
     const existingTask = await prisma.task.findFirst({ where: { id, userId } });
 
@@ -123,7 +123,7 @@ export const updateTask = async (req: Request, res: Response): Promise<void> => 
 export const deleteTask = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user!.userId;
-    const { id } = req.params;
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
     const task = await prisma.task.findFirst({ where: { id, userId } });
 
@@ -143,7 +143,7 @@ export const deleteTask = async (req: Request, res: Response): Promise<void> => 
 export const toggleTask = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user!.userId;
-    const { id } = req.params;
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
     const task = await prisma.task.findFirst({ where: { id, userId } });
 
