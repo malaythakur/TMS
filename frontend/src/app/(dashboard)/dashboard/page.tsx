@@ -50,7 +50,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen">
-      <Header title="Dashboard" onMenuToggle={() => {}} searchValue={search} onSearchChange={setSearch} />
+      <Header title="Dashboard" searchValue={search} onSearchChange={setSearch} />
 
       <div className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
