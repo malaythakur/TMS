@@ -14,8 +14,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     }
   }, [user, router]);
 
-  if (user) return null;
-
   return (
     <div className="min-h-screen flex">
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 to-purple-700 items-center justify-center p-12">
